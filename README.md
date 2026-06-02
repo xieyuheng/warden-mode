@@ -1,72 +1,89 @@
-# watch-mode
+# warden-mode
 
-A read-only Emacs major mode for running CLI watch scripts.
+Emacs major mode for watching a directory and automatically re-running a shell command on file changes.
 
-## Problem
+## Features
 
-Running `watch.sh` scripts in `M-x shell` or `eshell` works, but the
-buffer grows indefinitely. When the script clears the screen (via
-`entr -c`, `tsc --watch`, etc.), Emacs just appends more text instead
-of truly erasing the previous output.
+- Watches a directory recursively for file changes (create, modify, delete, rename)
+- Re-runs a user-specified shell command on each change
+- YAML-style front matter with colored status (ok/error) in output buffer
+- Highlights `file:line:col` location patterns as clickable links
+- Error folding (`TAB` / `<backtab>`) for clean overview
+- Location navigation (`RET` to jump, `M-n` / `M-p` to cycle)
+- Debounced execution (0.3s by default, configurable via `warden-debounce-interval`)
+- Support for multiple concurrent watch buffers
 
-## How it works
+## Installation
 
-Watch-mode runs a command as an async process in a read-only buffer.
-The process filter intercepts ANSI clear-screen sequences (`\033[H\033[2J`,
-`\033[2J\033[H`, `\033c`, etc.). When detected, the entire buffer is
-erased before inserting the fresh output. All ANSI escape codes are
-stripped for clean display.
+### Manual
 
-Handles escape sequences split across process filter calls (common
-when output arrives in chunks).
+Clone or copy the `warden-mode` directory into your Emacs load path, then add to `init.el`:
+
+```elisp
+(add-to-list 'load-path "~/.emacs.d/warden-mode")
+(require 'warden-mode)
+```
+
+### use-package
+
+```elisp
+(use-package warden-mode
+  :load-path "~/.emacs.d/warden-mode"
+  :bind ("C-c w" . warden))
+```
+
+### straight.el
+
+```elisp
+(use-package warden-mode
+  :straight (warden-mode
+             :type git
+             :host github
+             :repo "xieyuheng/meta-lisp"
+             :files ("editors/emacs/warden-mode/*.el"))
+  :bind ("C-c w" . warden))
+```
 
 ## Usage
 
-
-```bash
-cd ~/.emacs.d && git clone git@github.com:xieyuheng/watch-mode.git
+```
+M-x warden
 ```
 
-```elisp
-(add-to-list 'load-path "~/.emacs.d/watch-mode")
-(require 'watch-mode)
-```
+Prompts:
+
+| Prompt | Default | Description |
+|--------|---------|-------------|
+| Watch directory | `src` | Directory to watch recursively |
+| Command | `./scripts/check.sh` | Shell command to run on changes |
+
+Output appears in a read-only buffer named `*warden: <dir>*`.
+
+### Key bindings in warden buffer
+
+| Key | Command |
+|-----|---------|
+| `<f5>` | `warden-rerun` — manually re-run the command |
+| `RET` | `warden-jump-to-location` — open file at `file:line:col` in other window |
+| `TAB` | `warden-toggle-block` — fold/unfold current error block |
+| `<backtab>` | `warden-toggle-all-blocks` — fold/unfold all error blocks |
+| `M-n` | `warden-next-location` — move to next location |
+| `M-p` | `warden-prev-location` — move to previous location |
+
+The buffer's `kill-buffer-hook` automatically cleans up file watches and kills any running process.
+
+### Example
+
+From a `.meta` project directory:
 
 ```
-M-x watch
+M-x warden
+Watch directory: src
+Command: ./scripts/check.sh
 ```
 
-Prompts for a command (default `./scripts/watch.sh`). Opens a
-`*watch*` buffer and runs the command.
-
-## Keybindings
-
-| Key       | Action                            |
-|-----------|-----------------------------------|
-| `q`       | Kill process and close buffer     |
-| `g`       | Restart the watch process         |
-| `C-c C-k` | Kill process, keep buffer         |
-| `C-c C-c` | Kill process and close buffer     |
-
-All standard `special-mode` bindings are inherited.
+Every time a file in `src/` changes, `check.sh` re-runs and the output updates in `*warden: .../src/*`.
 
 ## Customization
 
-```elisp
-;; Default command for M-x watch
-(setq watch-default-command "npx tsc --noEmit --watch")
-
-;; Buffer name (default "*watch*")
-(setq watch-buffer-name "*my-watch*")
-
-;; Enable/disable auto-scroll (default t)
-(setq watch-auto-scroll nil)
-```
-
-## Requirements
-
-- Emacs 25.1+
-
-## License
-
-[GPLv3](LICENSE)
+- `warden-debounce-interval` (default `0.3`) — seconds to wait after last file change before re-running
