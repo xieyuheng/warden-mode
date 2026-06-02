@@ -22,6 +22,11 @@ when output arrives in chunks).
 
 ## Usage
 
+
+```bash
+cd ~/.emacs.d && git clone git@github.com:xieyuheng/watch-mode.git
+```
+
 ```elisp
 (add-to-list 'load-path "~/.emacs.d/watch-mode")
 (require 'watch-mode)
