@@ -1,7 +1,5 @@
 ;;; watch-mode.el --- Watch mode for running CLI watch scripts -*- lexical-binding: t; -*-
 
-;; Author: The meta-lisp project
-;; URL: https://github.com/xieyuheng/meta-lisp
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "25.1"))
 

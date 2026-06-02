@@ -61,3 +61,7 @@ All standard `special-mode` bindings are inherited.
 ## Requirements
 
 - Emacs 25.1+
+
+## License
+
+[GPLv3](LICENSE)
