@@ -99,8 +99,7 @@ COMMAND is run with `default-directory' as the working directory."
       (warden-cleanup)
       (setq warden-watchers (warden-setup-watches watch-dir (current-buffer)))
       (warden-run-command (current-buffer))
-      (pop-to-buffer (current-buffer))
-      (delete-other-windows))))
+      (pop-to-buffer (current-buffer)))))
 
 (provide 'warden-mode)
 ;;; warden-mode.el ends here
