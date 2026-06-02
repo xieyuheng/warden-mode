@@ -15,33 +15,11 @@ Emacs major mode for watching a directory and automatically re-running a shell c
 
 ## Installation
 
-### Manual
-
 Clone or copy the `warden-mode` directory into your Emacs load path, then add to `init.el`:
 
 ```elisp
 (add-to-list 'load-path "~/.emacs.d/warden-mode")
 (require 'warden-mode)
-```
-
-### use-package
-
-```elisp
-(use-package warden-mode
-  :load-path "~/.emacs.d/warden-mode"
-  :bind ("C-c w" . warden))
-```
-
-### straight.el
-
-```elisp
-(use-package warden-mode
-  :straight (warden-mode
-             :type git
-             :host github
-             :repo "xieyuheng/meta-lisp"
-             :files ("editors/emacs/warden-mode/*.el"))
-  :bind ("C-c w" . warden))
 ```
 
 ## Usage
@@ -52,23 +30,23 @@ M-x warden
 
 Prompts:
 
-| Prompt | Default | Description |
-|--------|---------|-------------|
-| Watch directory | `src` | Directory to watch recursively |
-| Command | `./scripts/check.sh` | Shell command to run on changes |
+| Prompt          | Default              | Description                     |
+|-----------------|----------------------|---------------------------------|
+| Watch directory | `src`                | Directory to watch recursively  |
+| Command         | `./scripts/check.sh` | Shell command to run on changes |
 
 Output appears in a read-only buffer named `*warden: <dir>*`.
 
 ### Key bindings in warden buffer
 
-| Key | Command |
-|-----|---------|
-| `<f5>` | `warden-rerun` — manually re-run the command |
-| `RET` | `warden-jump-to-location` — open file at `file:line:col` in other window |
-| `TAB` | `warden-toggle-block` — fold/unfold current error block |
-| `<backtab>` | `warden-toggle-all-blocks` — fold/unfold all error blocks |
-| `M-n` | `warden-next-location` — move to next location |
-| `M-p` | `warden-prev-location` — move to previous location |
+| Key         | Command                                                                   |
+|-------------|---------------------------------------------------------------------------|
+| `<f5>`      | `warden-rerun` — manually re-run the command                             |
+| `RET`       | `warden-jump-to-location` — open file at `file:line:col` in other window |
+| `TAB`       | `warden-toggle-block` — fold/unfold current error block                  |
+| `<backtab>` | `warden-toggle-all-blocks` — fold/unfold all error blocks                |
+| `M-n`       | `warden-next-location` — move to next location                           |
+| `M-p`       | `warden-prev-location` — move to previous location                       |
 
 The buffer's `kill-buffer-hook` automatically cleans up file watches and kills any running process.
 
