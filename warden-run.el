@@ -4,6 +4,19 @@
 
 (require 'cl-lib)
 
+(defun warden--safe-recenter (buffer)
+  "Safely recenter BUFFER if it is displayed in a window.
+Defers the operation via `run-with-timer' to avoid running display
+code directly inside a process sentinel."
+  (run-with-timer 0 nil
+    (lambda ()
+      (when (buffer-live-p buffer)
+        (let ((win (get-buffer-window buffer)))
+          (when win
+            (with-selected-window win
+              (with-current-buffer buffer
+                (recenter)))))))))
+
 (defun warden-run-command (buf)
   "Run the shell command and display output in BUF."
   (when (buffer-live-p buf)
@@ -65,7 +78,7 @@
                              (if first
                                  (progn
                                    (goto-char first)
-                                   (recenter))
+                                   (warden--safe-recenter buf))
                                (goto-char (point-max)))))))))
                 :file-handler t)))))))
 
