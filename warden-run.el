@@ -3,6 +3,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'ansi-color)
 
 (defun warden--safe-recenter (buffer)
   "Safely recenter BUFFER if it is displayed in a window.
@@ -71,8 +72,9 @@ code directly inside a process sentinel."
                                                      'face status-face))))))
                          (goto-char (point-max))
                          (let ((start (point)))
-                           (insert output)
-                           (warden-highlight-locations start (point))
+                            (insert output)
+                            (ansi-color-apply-on-region start (point))
+                            (warden-highlight-locations start (point))
                            (let ((first (text-property-any
                                          start (point) 'warden-location t)))
                              (if first
