@@ -3,7 +3,7 @@ set -euo pipefail
 
 if [ $# -lt 2 ]; then
     echo "用法: warden.sh <监控目录> <shell命令>"
-    echo "示例: warden.sh src 'npm run lint'"
+    echo "示例: warden.sh src scripts/check.sh"
     exit 1
 fi
 
