@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -lt 2 ]; then
+    echo "用法: warden.sh <监控目录> <shell命令>"
+    echo "示例: warden.sh src 'npm run lint'"
+    exit 1
+fi
+
+emacsclient -c -n --eval "$(cat <<EOF
+(let ((default-directory "$PWD"))
+  (warden "$1" "$2"))
+EOF
+)"
